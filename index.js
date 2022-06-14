@@ -97,11 +97,11 @@ router.get('/users/:userId', (req, res) => {
     const users = getAllUsers();
     const user = users.find(user => user.id === userId);
 
-    if (user) {
-        res.status(200).send(user);
-    } else {
-        res.status(404).send({success: true, msg: 'User id does not exist'});
+    if (!user) {
+        return res.status(404).send({success: true, msg: 'User id does not exist'});
     }
+
+    res.status(200).send(user);
 
 })
 
@@ -112,6 +112,7 @@ router.patch('/user/:userId', (req, res) => {
     }
 
     const userId = req.params.userId;
+    console.log(userId)
     const requestBody = req.body;
     const existingUsers = getAllUsers();
     const findUserIndex = existingUsers.findIndex(user => user.id === userId);
@@ -120,7 +121,7 @@ router.patch('/user/:userId', (req, res) => {
         return res.status(401).send({error: true, msg: 'User data missing'});
     }
 
-    if (findUserIndex) {
+    if (findUserIndex >= 0) {
         requestBody.first_name ? existingUsers[findUserIndex].first_name = requestBody.first_name : '';
         requestBody.last_name ? existingUsers[findUserIndex].last_name = requestBody.last_name : '';
         requestBody.email_id ? existingUsers[findUserIndex].email_id = requestBody.email_id : '';
